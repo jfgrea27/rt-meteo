@@ -6,7 +6,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
-	"github.com/jfgrea27/rt-meteo/internal/utils"
 )
 
 type QueueService interface {
@@ -14,13 +13,19 @@ type QueueService interface {
 	Consume(ctx context.Context, handle func(*string) error, q string) error
 }
 
-func ConstructSQSService() *SQSService {
-	awsAccount := utils.GetEnvVar("AWS_ACCOUNT", true)
-	awsRegion := utils.GetEnvVar("AWS_REGION", true)
+func ConstructSQSService(awsAccount, awsRegion string, waitTimeSeconds int32) *SQSService {
+	if awsAccount == "" {
+		panic("AWS_ACCOUNT is required for sqs provider")
+	}
+	if awsRegion == "" {
+		panic("AWS_REGION is required for sqs provider")
+	}
 
 	s := &SQSService{
-		AWSAccount: awsAccount,
-		AWSRegion:  awsRegion,
+		AWSAccount:      awsAccount,
+		AWSRegion:       awsRegion,
+		WaitTimeSeconds: waitTimeSeconds,
+		queueURLs:       make(map[string]string),
 	}
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
@@ -34,11 +39,11 @@ func ConstructSQSService() *SQSService {
 	return s
 }
 
-func ConstructQueueService(p QueueProvider) QueueService {
+func ConstructQueueService(p QueueProvider, awsAccount, awsRegion string, waitTimeSeconds int32) QueueService {
 	var svc QueueService
 	switch p {
 	case SQS:
-		svc = ConstructSQSService()
+		svc = ConstructSQSService(awsAccount, awsRegion, waitTimeSeconds)
 	default:
 		panic(fmt.Sprintf("%s is not a valid queue provider", p))
 	}

@@ -1,0 +1,79 @@
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs,s3
+      - AWS_DEFAULT_REGION=${AWS_REGION:-us-east-1}
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - ./src/localstack-init:/etc/localstack/init
+
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=meteo
+      - POSTGRES_PASSWORD=meteo
+      - POSTGRES_DB=meteo
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./.dev/postgres-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meteo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  producer:
+    build:
+      context: src
+      dockerfile: ../Dockerfile
+      args:
+        SVC: producer
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      - WEATHER_PROVIDER=openweather
+      - QUEUE_PROVIDER=sqs
+      - QUEUE_NAME=weather
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCOUNT=000000000000
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ENDPOINT_URL=http://localstack:4566
+
+  consumer:
+    build:
+      context: src
+      dockerfile: ../Dockerfile
+      args:
+        SVC: consumer
+    depends_on:
+      localstack:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      - QUEUE_PROVIDER=sqs
+      - QUEUE_NAME=weather
+      - BLOB_PROVIDER=s3
+      - BLOB_BUCKET=weather-raw
+      - DB_PROVIDER=postgres
+      - DATABASE_URL=postgres://meteo:meteo@postgres:5432/meteo?sslmode=disable
+      - DB_SCHEMA=meteo
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCOUNT=000000000000
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - S3_USE_PATH_STYLE=true
+      - SQS_WAIT_TIME_SECONDS=20
+
+volumes:
+  localstack-data:
+  postgres-data:

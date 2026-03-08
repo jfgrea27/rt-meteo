@@ -8,12 +8,16 @@ default:
 test:
     cd src && go test ./...
 
+# Run all Go tests
+test-coverage:
+    cd src && go test ./... -cover
+
 # Build a specific service (api, consumer, producer)
 build SVC:
     cd src && go build -o ../bin/{{SVC}} ./cmd/{{SVC}}
 
 docker-build SVC:
-    cd src && docker build --build-arg SVC={{SVC}} -t {{SVC}}:latest .
+    docker build -f Dockerfile --build-arg SVC={{SVC}} -t {{SVC}}:latest src
 
 docker-run SVC: 
     just docker-build {{SVC}}
@@ -28,3 +32,7 @@ build-all:
     just build api
     just build consumer
     just build producer
+
+# Run
+run SVC:
+    cd src && go run ./cmd/{{SVC}}

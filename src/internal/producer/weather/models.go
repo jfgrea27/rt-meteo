@@ -1,28 +1,12 @@
 package weather
 
-import "time"
+import "github.com/jfgrea27/rt-meteo/internal/weather"
 
-type City string
+// Re-export shared types used by the producer config and callers.
+type WeatherProvider = weather.Provider
+type City = weather.City
+type Coordinate = weather.Coordinate
 
-type Coordinate struct {
-	Lat float32
-	Lon float32
-}
+const OpenWeather = weather.OpenWeather
 
-type WeatherEntry struct {
-	Time time.Time
-	City City
-
-	Temperature float32
-	Pressure    float32
-	Humidity    float32
-	WindSpeed   float32
-	UV          float32
-	Description string
-}
-type CurrentWeatherResponse = WeatherEntry
-
-type HistoricalWeatherResponse struct {
-	City    City
-	Entries []WeatherEntry
-}
+var CITY_COORDINATES = weather.CITY_COORDINATES

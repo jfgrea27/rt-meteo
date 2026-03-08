@@ -1,15 +1,26 @@
 package weather
 
-func AggregateCurrentWeather(svc WeatherService) []*CurrentWeatherResponse {
-	weathers := make([]*CurrentWeatherResponse, len(CITY_COORDINATES))
+import (
+	"log/slog"
+
+	sharedweather "github.com/jfgrea27/rt-meteo/internal/weather"
+)
+
+func AggregateCurrentWeather(log *slog.Logger, svc WeatherService) []sharedweather.WeatherMessage {
+	messages := make([]sharedweather.WeatherMessage, 0, len(CITY_COORDINATES))
 
 	for city := range CITY_COORDINATES {
-		weather, err := svc.GetCurrentWeather(city)
-
+		raw, err := svc.GetCurrentWeatherRaw(city)
 		if err != nil {
-			panic(err)
+			log.Error("failed to get weather, skipping city", "city", city, "error", err)
+			continue
 		}
-		weathers = append(weathers, weather)
+		messages = append(messages, sharedweather.WeatherMessage{
+			Provider: svc.Provider(),
+			Content:  raw,
+		})
 	}
-	return weathers
+
+	log.Info("aggregated weather data", "cities_ok", len(messages), "cities_total", len(CITY_COORDINATES))
+	return messages
 }

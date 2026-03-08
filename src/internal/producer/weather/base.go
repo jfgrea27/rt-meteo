@@ -1,25 +1,32 @@
 package weather
 
 import (
+	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"time"
 
-	"github.com/jfgrea27/rt-meteo/internal/utils"
+	sharedweather "github.com/jfgrea27/rt-meteo/internal/weather"
 )
 
 type WeatherService interface {
-	GetCurrentWeather(c City) (*CurrentWeatherResponse, error)
-	GetHistoricalWeather(c City, from time.Time, to time.Time) (*HistoricalWeatherResponse, error)
+	GetCurrentWeatherRaw(c City) (json.RawMessage, error)
+	GetHistoricalWeatherRaw(c City, from time.Time, to time.Time) (json.RawMessage, error)
+	Provider() sharedweather.Provider
 }
 
-func ConstructWeatherService(p WeatherProvider) WeatherService {
+func ConstructWeatherService(log *slog.Logger, p WeatherProvider, apiKey string) WeatherService {
 	var svc WeatherService
 	switch p {
 	case OpenWeather:
+		if apiKey == "" {
+			panic("OPENWEATHER_API_KEY is required for openweather provider")
+		}
 		svc = &OpenWeatherService{
-			apiKey: utils.GetEnvVar("OPEN_WEATHER_API_KEY", false),
+			apiKey: apiKey,
 			client: &http.Client{},
+			log:    log.With("service", "openweather"),
 		}
 	default:
 		panic(fmt.Sprintf("%s is not a valid weather provider", p))
