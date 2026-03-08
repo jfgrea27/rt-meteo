@@ -20,6 +20,7 @@
           pkgs.postgresql
           pkgs.kubectl
           pkgs.kubernetes-helm
+          pkgs.just
         ];
         shellHook = ''
           export GOPATH="$PWD/src/.go"

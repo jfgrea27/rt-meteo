@@ -1,0 +1,31 @@
+services:
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs
+      - AWS_DEFAULT_REGION=${AWS_REGION:-us-east-1}
+    volumes:
+      - localstack-data:/var/lib/localstack
+
+  producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SVC: producer
+    depends_on:
+      - localstack
+    environment:
+      - WEATHER_PROVIDER=openweather
+      - QUEUE_PROVIDER=sqs
+      - QUEUE_NAME=${QUEUE_NAME}
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ENDPOINT_URL=http://localstack:4566
+
+volumes:
+  localstack-data:
