@@ -16,11 +16,15 @@
       devShell = pkgs.mkShell {
         packages = [
           pkgs.uv
+          pkgs.go
           pkgs.postgresql
           pkgs.kubectl
           pkgs.kubernetes-helm
         ];
         shellHook = ''
+          export GOPATH="$PWD/src/.go"
+          export GOROOT="${pkgs.go}/share/go"
+          export PATH="$GOPATH/bin:$PATH"
         '';
       };
     });
