@@ -1,0 +1,15 @@
+dependencies:
+- name: producer
+  repository: ""
+  version: 0.1.0
+- name: consumer
+  repository: ""
+  version: 0.1.0
+- name: api
+  repository: ""
+  version: 0.1.0
+- name: gateway-helm
+  repository: oci://docker.io/envoyproxy
+  version: v1.7.1
+digest: sha256:32f203bb512ebb987581e954f0f1ef30a29cac3f6dc411bb46045f9b4ebc94cf
+generated: "2026-03-23T21:36:47.664228Z"

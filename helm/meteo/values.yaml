@@ -7,15 +7,20 @@ global:
   aws:
     region: eu-west-2
     account: ""
+  gateway:
+    name: "" # defaults to <release>-meteo
 
 # -- Producer subchart overrides.
 producer:
-  enabled: true
+  enabled: false
 
 # -- Consumer subchart overrides.
 consumer:
-  enabled: true
+  enabled: false
 
 # -- API subchart overrides.
 api:
+  enabled: false
+
+envoy:
   enabled: true

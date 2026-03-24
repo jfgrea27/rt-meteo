@@ -1,5 +1,5 @@
 apiVersion: v2
-name: rt-meteo
+name: meteo
 description: Real-time weather data pipeline
 type: application
 version: 0.1.0
@@ -15,3 +15,8 @@ dependencies:
   - name: api
     version: 0.1.0
     condition: api.enabled
+  - name: gateway-helm
+    version: "v1.7.1"
+    repository: "oci://docker.io/envoyproxy"
+    namespace: envoy-gateway-system
+    condition: envoy.enabled

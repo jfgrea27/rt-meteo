@@ -1,5 +1,5 @@
 image:
-  repository: rt-meteo/producer
+  repository: meteo/producer
   tag: ""
   pullPolicy: ""
 
@@ -30,6 +30,15 @@ secrets:
   # -- Name of an existing Secret containing OPENWEATHER_API_KEY.
   openweatherApiKeySecret: ""
   openweatherApiKeyKey: OPENWEATHER_API_KEY
+
+service:
+  port: 80
+
+gateway:
+  httpRoute:
+    enabled: false
+    hostnames: []
+    filters: []
 
 podAnnotations: {}
 nodeSelector: {}
