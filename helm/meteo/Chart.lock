@@ -11,5 +11,8 @@ dependencies:
 - name: gateway-helm
   repository: oci://docker.io/envoyproxy
   version: v1.7.1
-digest: sha256:32f203bb512ebb987581e954f0f1ef30a29cac3f6dc411bb46045f9b4ebc94cf
-generated: "2026-03-23T21:36:47.664228Z"
+- name: cert-manager
+  repository: oci://quay.io/jetstack/charts
+  version: v1.20.0
+digest: sha256:25b5c4c9b81012a63102ad15543d30d2240788fec8f0101189d1478d8b752b4f
+generated: "2026-03-24T08:46:10.144408Z"

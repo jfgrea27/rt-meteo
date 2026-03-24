@@ -33,7 +33,7 @@ secrets:
   databaseUrlSecret: ""
   databaseUrlKey: DATABASE_URL
 
-gateway:
+envoy:
   httpRoute:
     enabled: false
     hostnames: []

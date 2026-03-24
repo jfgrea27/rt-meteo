@@ -34,7 +34,7 @@ secrets:
 service:
   port: 80
 
-gateway:
+envoy:
   httpRoute:
     enabled: false
     hostnames: []

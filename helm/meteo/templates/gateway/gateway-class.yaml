@@ -4,4 +4,3 @@ metadata:
   name: {{ include "meteo.fullname" . }}
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
---

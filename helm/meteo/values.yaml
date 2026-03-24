@@ -24,3 +24,8 @@ api:
 
 envoy:
   enabled: true
+
+cert-manager:
+  enabled: true
+dev:
+  enabled: true

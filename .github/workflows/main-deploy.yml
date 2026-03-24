@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  packages: write
 
 jobs:
   producer:
@@ -15,11 +15,8 @@ jobs:
     with:
       service: producer
       upload-coverage: true
-      push-ecr: true
-      ecr-registry: ${{ vars.ECR_REGISTRY }}
-      image-tag: latest
-    secrets:
-      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      push-image: true
+      image-tag: ${{ github.sha }}
 
   consumer:
     name: Consumer
@@ -27,11 +24,8 @@ jobs:
     with:
       service: consumer
       upload-coverage: true
-      push-ecr: true
-      ecr-registry: ${{ vars.ECR_REGISTRY }}
-      image-tag: latest
-    secrets:
-      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      push-image: true
+      image-tag: ${{ github.sha }}
 
   api:
     name: API
@@ -39,8 +33,5 @@ jobs:
     with:
       service: api
       upload-coverage: true
-      push-ecr: true
-      ecr-registry: ${{ vars.ECR_REGISTRY }}
-      image-tag: latest
-    secrets:
-      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      push-image: true
+      image-tag: ${{ github.sha }}

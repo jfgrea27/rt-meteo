@@ -1,4 +1,4 @@
-{{- if and .Values.dev.enabled }}
+{{- if and .Values.dev.enabled .Values.envoy.enabled }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -58,7 +58,7 @@ metadata:
   name: backend
 spec:
   parentRefs:
-    - name: meteo
+    - name: {{ include "meteo.fullname" . }}
   hostnames:
     - "www.example.com"
   rules:
